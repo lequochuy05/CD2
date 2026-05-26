@@ -36,8 +36,10 @@ To deploy this project, please follow the below mentioned steps.
 
     ```bash
     git clone https://github.com/lequochuy05/CD2.git
+    git clone https://github.com/lequochuy05/CD2.git
     ```
 
+- This will create a new folder named **CD2** inside the **Cloned Repo** directory.
 - This will create a new folder named **CD2** inside the **Cloned Repo** directory.
 
 - Go inside the **CD2** folder through the previously opened terminal.
@@ -58,8 +60,8 @@ To deploy this project, please follow the below mentioned steps.
 
 - Next, finally we can deploy the project.
     
-    - Open a new terminal inside the **CD2** directory and run the following commands:
-        ```bashs
+    - Open a new terminal inside the **Autonomous Maze Solving Turtlebot3 Simulation** directory and run the following commands:
+        ```bash
         source install/setup.bash
         ros2 launch autonomous_tb3 tb3_maze_navigation.launch.py
         ```
