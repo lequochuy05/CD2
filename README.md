@@ -60,7 +60,7 @@ To deploy this project, please follow the below mentioned steps.
 
 - Next, finally we can deploy the project.
     
-    - Open a new terminal inside the **Autonomous Maze Solving Turtlebot3 Simulation** directory and run the following commands:
+    - Open a new terminal inside the **CD2** directory and run the following commands:
         ```bash
         source install/setup.bash
         ros2 launch autonomous_tb3 tb3_maze_navigation.launch.py
