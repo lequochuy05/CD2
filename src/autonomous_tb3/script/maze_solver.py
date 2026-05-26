@@ -1,51 +1,85 @@
-#! /usr/bin/env python3
+#!/usr/bin/env python3
 
+from dataclasses import dataclass
+
+import rclpy
 from geometry_msgs.msg import PoseStamped
 from nav2_simple_commander.robot_navigator import BasicNavigator
-import rclpy
 
 
-def main():
+MAP_FRAME = "map"
+
+
+@dataclass(frozen=True)
+class InitialPose:
+    x: float
+    y: float
+    yaw_z: float = 0.0
+    yaw_w: float = 1.0
+
+
+DEFAULT_INITIAL_POSE = InitialPose(
+    x=-3.915259599685669,
+    y=-7.872808456420898,
+)
+
+
+def build_pose_stamped(initial_pose: InitialPose, frame_id: str = MAP_FRAME) -> PoseStamped:
+    pose = PoseStamped()
+    pose.header.frame_id = frame_id
+
+    # Use stamp = 0 so AMCL/Nav2 accepts the pose even when Gazebo sim-time and
+    # wall-time are not perfectly synchronized during startup.
+    pose.header.stamp.sec = 0
+    pose.header.stamp.nanosec = 0
+
+    pose.pose.position.x = initial_pose.x
+    pose.pose.position.y = initial_pose.y
+    pose.pose.orientation.z = initial_pose.yaw_z
+    pose.pose.orientation.w = initial_pose.yaw_w
+    return pose
+
+
+class MazeSolver:
+    """Prepare Nav2 for manual goal selection from RViz."""
+
+    def __init__(self, navigator: BasicNavigator, initial_pose: InitialPose) -> None:
+        self.navigator = navigator
+        self.initial_pose = initial_pose
+
+    def configure_initial_pose(self) -> None:
+        self.navigator.get_logger().info("Dang nap diem xuat phat mac dinh...")
+        self.navigator.setInitialPose(build_pose_stamped(self.initial_pose))
+
+    def wait_until_ready(self) -> None:
+        self.navigator.get_logger().info("Dang doi Nav2 khoi dong...")
+        self.navigator.waitUntilNav2Active()
+
+    def print_ready_message(self) -> None:
+        print("==================================================")
+        print("Da nap xong diem xuat phat hop le.")
+        print("Hay click 'Nav2 Goal' tren RViz va chon diem dich.")
+        print("Nav2 se tu tinh duong va dieu khien robot di toi do.")
+        print("==================================================")
+
+    def run(self) -> None:
+        self.configure_initial_pose()
+        self.wait_until_ready()
+        self.print_ready_message()
+
+
+def main() -> None:
     rclpy.init()
-
     navigator = BasicNavigator()
 
-    # 1. THIẾT LẬP ĐIỂM XUẤT PHÁT MẶC ĐỊNH (Hardcoded Initial Pose)
-    initial_pose = PoseStamped()
-    initial_pose.header.frame_id = 'map'
-    # Gán thời gian = 0 để tránh lỗi lệch thời gian giữa hệ thống (Wall-time) và Gazebo (Sim-time)
-    initial_pose.header.stamp.sec = 0
-    initial_pose.header.stamp.nanosec = 0
-    
-    initial_pose.pose.position.x = -3.915259599685669
-    initial_pose.pose.position.y = -7.872808456420898
-    
-    # SỬA LỖI QUATERNION: (z=0.2, w=0.9999...) trong code cũ là sai mặt toán học (không chuẩn hóa = 1).
-    # Điều này khiến AMCL báo lỗi "malformed" và từ chối nhận vị trí.
-    # Sửa lại thành góc 0 độ (z=0.0, w=1.0) là hợp lệ.
-    initial_pose.pose.orientation.z = 0.0
-    initial_pose.pose.orientation.w = 1.0
-    
-    print("Đang nạp điểm xuất phát mặc định...")
-    navigator.setInitialPose(initial_pose)
-
-    # Đợi hệ thống Nav2 khởi động xong
-    navigator.waitUntilNav2Active()
-
-    print("==================================================")
-    print("✅ Đã nạp xong điểm xuất phát hợp lệ!")
-    print("🎯 Bây giờ hãy click nút 'Nav2 Goal' trên RViz")
-    print("   và chọn điểm đích, xe sẽ tự chạy tới đó.")
-    print("==================================================")
-
-    # QUAN TRỌNG: KHÔNG GÁN CỨNG ĐIỂM ĐÍCH Ở ĐÂY NỮA
-    # Hệ thống Nav2 sẽ tự động nhận điểm đích từ công cụ "Nav2 Goal" trên RViz.
-
-    # Chỉ tắt node Python này, KHÔNG tắt hệ thống Nav2
-    navigator.destroy_node()
-    rclpy.shutdown()
-    exit(0)
+    try:
+        MazeSolver(navigator, DEFAULT_INITIAL_POSE).run()
+    except KeyboardInterrupt:
+        navigator.get_logger().info("Da dung maze_solver bang Ctrl+C.")
+    finally:
+        navigator.destroy_node()
+        rclpy.shutdown()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
