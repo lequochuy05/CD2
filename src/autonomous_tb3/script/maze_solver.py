@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-
 from dataclasses import dataclass
 
 import rclpy
@@ -14,8 +13,8 @@ MAP_FRAME = "map"
 class InitialPose:
     x: float
     y: float
-    yaw_z: float = 0.0
-    yaw_w: float = 1.0
+    yaw_z: float = 0.0 # góc quay Z
+    yaw_w: float = 1.0 # góc quay W
 
 
 DEFAULT_INITIAL_POSE = InitialPose(
@@ -25,11 +24,10 @@ DEFAULT_INITIAL_POSE = InitialPose(
 
 
 def build_pose_stamped(initial_pose: InitialPose, frame_id: str = MAP_FRAME) -> PoseStamped:
-    pose = PoseStamped()
-    pose.header.frame_id = frame_id
+    pose = PoseStamped()   # Tạo PoseStamped để đóng gói dữ liệu vị trí và hướng
+    pose.header.frame_id = frame_id  # Gán frame_id là 'map'
 
-    # Use stamp = 0 so AMCL/Nav2 accepts the pose even when Gazebo sim-time and
-    # wall-time are not perfectly synchronized during startup.
+    # Gán stamp = 0 để vượt qua bộ lọc kiểm tra dấu thời gian
     pose.header.stamp.sec = 0
     pose.header.stamp.nanosec = 0
 

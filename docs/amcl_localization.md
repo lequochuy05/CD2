@@ -81,26 +81,28 @@ navigator.setInitialPose(initial_pose)
 
 ---
 
-## 3. Cấu hình Tham số AMCL Tối ưu cho Mê cung (`nav2_params.yaml`)
+## 3. Cấu hình Tham số AMCL Tối ưu cho Mê cung (`tb3_nav_params.yaml`)
 
-Trong môi trường mê cung hẹp, việc tối ưu hóa tham số AMCL giúp robot không bị "lạc đường" khi đi qua các khúc cua gấp:
+Trong môi trường mê cung hẹp, việc tối ưu hóa các tham số lọc hạt thích nghi (Adaptive Particle Filter) giúp cân bằng giữa độ chính xác định vị và hiệu năng CPU:
 
 ```yaml
 amcl:
   ros__parameters:
-    min_particles: 500          # Số lượng hạt tối thiểu để duy trì định vị
-    max_particles: 2000         # Số lượng hạt tối đa khi robot bị mất định vị (phục vụ quét lại)
+    min_particles: 500          # Số lượng hạt tối thiểu để duy trì định vị ổn định
+    max_particles: 2000         # Số lượng hạt tối đa khi mất định vị (phục vụ tái quét toàn cục)
     pf_err: 0.05                # Sai số bộ lọc hạt mong muốn
     pf_z: 0.99                  # Độ tin cậy KLD
-    update_min_d: 0.1           # Cập nhật hạt khi robot đi tối thiểu 10cm (giúp giảm tải CPU)
-    update_min_a: 0.15          # Cập nhật hạt khi robot quay tối thiểu 8.5 độ
-    resample_interval: 1        # Tần suất tái mẫu hạt (mỗi bước lọc đều thực hiện)
-    laser_max_range: 3.5        # Giới hạn quét của LiDAR LDS-02 trong mê cung
-    robot_model_type: "nav2_amcl::DifferentialMotionModel" # Mô hình động cơ vi sai của Turtlebot3
+    update_min_d: 0.25          # Cập nhật hạt khi robot di chuyển tịnh tiến tối thiểu 25cm
+    update_min_a: 0.2           # Cập nhật hạt khi robot quay tối thiểu 0.2 rad (~11.4 độ)
+    resample_interval: 1        # Tần suất tái mẫu hạt (mỗi bước lọc đều thực hiện tái mẫu)
+    laser_max_range: 100.0      # Giới hạn quét tối đa của cảm biến trong môi trường mô phỏng (mét)
+    robot_model_type: "nav2_amcl::DifferentialMotionModel" # Mô hình động lực học vi sai của Turtlebot3 Waffle
 ```
 
 ---
 
 ## 4. Tóm tắt Vai trò của AMCL trong Đồ án
-*   **Độ chính xác cao:** Kết hợp dữ liệu IMU/Encoder mượt mà nhưng sai số lũy tiến với LiDAR quét cạnh tường mê cung tuyệt đối chính xác để đưa ra tọa độ thực tế tối ưu.
-*   **Tính thích nghi cao:** Có khả năng tự động khôi phục vị trí (Global Localization) nếu robot bị nhấc đặt sang vị trí khác hoặc gặp hiện tượng trượt bánh lớn trong Gazebo.
+*   **Độ chính xác cao:** Phối hợp nhịp nhàng giữa dữ liệu tích phân liên tục `/odom` (IMU & Wheel Encoders) và dữ liệu đo khoảng cách tuyệt đối `/scan` từ LiDAR để đưa ra tọa độ định vị tối ưu, giúp giải thuật **A\*** vẽ đường chuẩn xác.
+*   **Tiết kiệm tài nguyên nhúng**: Nhờ cấu hình thông minh của `update_min_d: 0.25` và `update_min_a: 0.2`, robot chỉ tính toán lọc hạt khi di chuyển thực tế qua một khoảng biên độ nhất định, giảm tải tối đa CPU cho máy tính điều khiển.
+*   **Tính thích nghi cao:** Có khả năng phục hồi định vị toàn cục (Global Localization) nếu robot gặp hiện tượng trượt bánh lớn trong Gazebo hoặc bị tác động dịch chuyển bất ngờ.
+

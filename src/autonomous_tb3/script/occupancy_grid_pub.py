@@ -1,5 +1,4 @@
-#! /usr/bin/env python3
-
+ #!/usr/bin/env python3
 # Node for publishing the OccupancyGrid Messages.
 
 import rclpy

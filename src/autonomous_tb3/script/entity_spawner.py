@@ -1,7 +1,5 @@
-#! /usr/bin/env python3
-
+#!/usr/bin/env python3
 # Node for spawning our maze world inside the gazebo simulation environment.
-
 import sys
 import rclpy
 from gazebo_msgs.srv import SpawnEntity

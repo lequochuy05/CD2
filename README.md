@@ -1,83 +1,99 @@
-# Autonomous Maze Solving Turtlebot3 Simulation
+# Mô phỏng giải mê cung tự động bằng Turtlebot3
 
-This repository contains the code to produce a **Gazebo Classic Simulation** of a **Turtlebot3** (***waffle***) robot (designed by *Robotis*) that navigates its way through a simple maze **autonomously**.
+Kho lưu trữ này chứa mã để tạo ra một **mô phỏng Gazebo Classic** của robot **Turtlebot3** (***waffle***) (được thiết kế bởi *Robotis*) tự động di chuyển qua một mê cung đơn giản.
 
-This repository was built while following the learnings and instructions of the **Udemy** Course **ROS2 Autonomous Driving and SLAM using NAV2 with TurtleBot3** created by **Muhammad Luqman**.
+Kho lưu trữ này được xây dựng dựa trên kiến ​​thức và hướng dẫn của khóa học **Udemy** **ROS2 Autonomous Driving and SLAM using NAV2 with TurtleBot3** do **Muhammad Luqman** tạo ra.
 
-The software tools mainly used in building this project are :
+Các công cụ phần mềm chủ yếu được sử dụng để xây dựng dự án này là:
 
-- Python3 Interpreter
-- Basic ROS2 Framework
-- Gazebo Classic Simulator
-- *turtlebot3_gazebo* ROS2 package
-- *slam_toolbox* ROS2 package
-- Navigation2 Stack
+- Trình thông dịch Python3
+- Khung ROS2 cơ bản
+- Trình mô phỏng Gazebo Classic
+- Gói ROS2 *turtlebot3_gazebo*
 
-Operating System :
-- Ubuntu (*you can use the latest version available*) 
+- Gói ROS2 *slam_toolbox*
 
-In order to deploy this project successfully, all the above listed softwares must be installed in your Ubuntu OS.
+- Ngăn xếp Navigation2
 
+Hệ điều hành:
 
-## What is DIFFERENT in this Project ? 
+- Ubuntu (*bạn có thể sử dụng phiên bản mới nhất hiện có*)
 
-Originally, this project was built as an **ament_python** type ROS2 package in the above mentioned Course. However, in this repository, I have built the project as an **ament_cmake** type ROS2 package.
+Để triển khai dự án này thành công, tất cả các phần mềm được liệt kê ở trên phải được cài đặt trên hệ điều hành Ubuntu của bạn.
 
+## Điểm KHÁC BIỆT trong Dự án này?
 
-## Deployment
+Ban đầu, dự án này được xây dựng như một gói ROS2 loại **ament_python** trong Khóa học đã đề cập ở trên. Tuy nhiên, trong kho lưu trữ này, tôi đã xây dựng dự án như một gói ROS2 loại **ament_cmake**.
 
-To deploy this project, please follow the below mentioned steps.
+## Triển khai
 
-- **Create a new folder** at a suitable space in your Ubuntu OS. You can name the folder anything you want. But for the sake of this demonstration, I am naming it as **Cloned Repo**
+Để triển khai dự án này, vui lòng làm theo các bước sau:
 
-- Open a **new terminal** inside the folder.
+- **Tạo một thư mục mới** ở một vị trí thích hợp trong hệ điều hành Ubuntu của bạn. Bạn có thể đặt tên thư mục bất kỳ. Nhưng để minh họa, tôi đặt tên là **Cloned Repo**
 
-- **Clone this repository** inside the folder by running the following terminal command.
+- Mở một **cửa sổ terminal mới** bên trong thư mục đó.
 
-    ```bash
-    git clone https://github.com/lequochuy05/CD2.git
-    git clone https://github.com/lequochuy05/CD2.git
-    ```
+- **Sao chép kho lưu trữ này** vào thư mục bằng cách chạy lệnh sau trong terminal:
 
-- This will create a new folder named **CD2** inside the **Cloned Repo** directory.
-- This will create a new folder named **CD2** inside the **Cloned Repo** directory.
+```bash
 
-- Go inside the **CD2** folder through the previously opened terminal.
+git clone https://github.com/lequochuy05/CD2.git
 
-    ```
-    cd CD2/
-    ```
+git clone https://github.com/lequochuy05/CD2.git
 
-- Next, we need to build this project. So run the following command from the same terminal.
+```
 
-    ```bash
-    colcon build
-    ```
-    
-    This will generate 3 (three) new folders inside the **CD2* folder namely - **build**, **install** and **log**.
+- Thao tác này sẽ tạo một thư mục mới có tên **CD2** bên trong thư mục **Cloned Repo**.
 
-- Close the previous terminal.
+- Thao tác này sẽ tạo một thư mục mới có tên **CD2** bên trong thư mục **Cloned Repo**.
 
-- Next, finally we can deploy the project.
-    
-    - Open a new terminal inside the **CD2** directory and run the following commands:
-        ```bash
-        source install/setup.bash
-        ros2 launch autonomous_tb3 tb3_maze_navigation.launch.py
-        ```
+- Truy cập vào thư mục **CD2** thông qua cửa sổ terminal đã mở trước đó.
 
-        This will open a **Gazebo Classic Simulator Window** (with the simulated ***maze world*** and a ***Turtlebot3*** robot - inside of it) AND a **RViz2 Window** (where you can see a 2D map of the maze world). 
-        
-        Use ***Mouse Scroll Wheel*** to ***Zoom IN/Zoom OUT*** in both the **Gazebo** and **RViz2** enviroments.
+```
 
-        Use **left mouse button** (to PAN) and ***Mouse Scroll Button*** (to ROTATE) -- for adjusting the position and view of the **maze world** in the **Gazebo** environment - as per your convenience.
+cd CD2/
 
-        Use **left mouse button** (to ROTATE) and ***Mouse Scroll Button*** (to PAN) -- for adjusting the position and view of the **2D maze map** in the **RViz2** environment - a per your convenience.
+```
 
-        Also, before proceeding to the next step, it is recomended to keep both the **Gazebo** and **Rviz2** windows opened side by side, so that you that you can see see what's happening in both the windows at the same time.
+- Tiếp theo, chúng ta cần biên dịch dự án này. Vì vậy, hãy chạy lệnh sau từ cùng một cửa sổ terminal.
 
-    - Open a second parallel terminal inside the **CD2** directory (while keeping the previous terminal alive) and run the following command from it :
-        ```bash
-        source install/setup.bash
-        ros2 run autonomous_tb3 maze_solver.py
-        ```
+```bash
+
+colcon build
+
+```
+
+Thao tác này sẽ tạo ra 3 (ba) thư mục mới bên trong thư mục **CD2**, đó là - **build**, **install** và **log**.
+
+- Đóng cửa sổ terminal trước đó.
+
+- Cuối cùng, chúng ta có thể triển khai dự án.
+
+- Mở một cửa sổ terminal mới bên trong thư mục **CD2** và chạy các lệnh sau:
+
+```bash
+
+source install/setup.bash
+
+ros2 launch autonomous_tb3 tb3_maze_navigation.launch.py
+
+```
+
+Thao tác này sẽ mở một **cửa sổ mô phỏng Gazebo Classic** (với thế giới mê cung mô phỏng và một robot ***Turtlebot3*** bên trong) VÀ một **cửa sổ RViz2** (nơi bạn có thể thấy bản đồ 2D của thế giới mê cung).
+
+Sử dụng ***con lăn chuột*** để ***phóng to/thu nhỏ*** trong cả môi trường **Gazebo** và **RViz2**.
+
+Sử dụng **nút chuột trái** (để di chuyển) và ***con lăn chuột*** (để xoay) -- để điều chỉnh vị trí và góc nhìn của **thế giới mê cung** trong môi trường **Gazebo** - theo ý muốn của bạn.
+
+Sử dụng **nút chuột trái** (để XOAY) và ***nút cuộn chuột*** (để DI CHUYỂN) -- để điều chỉnh vị trí và góc nhìn của **bản đồ mê cung 2D** trong môi trường **RViz2** - sao cho thuận tiện nhất.
+
+Ngoài ra, trước khi tiến hành bước tiếp theo, bạn nên mở cả hai cửa sổ **Gazebo** và **Rviz2** cạnh nhau để có thể quan sát những gì đang diễn ra trong cả hai cửa sổ cùng một lúc.
+
+- Mở một cửa sổ terminal song song thứ hai bên trong thư mục **CD2** (trong khi vẫn giữ cửa sổ terminal trước đó hoạt động) và chạy lệnh sau từ đó:
+
+```bash
+
+source install/setup.bash
+
+ros2 run autonomous_tb3 maze_solver.py
+```
