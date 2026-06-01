@@ -12,23 +12,37 @@ Thuật toán A* là thuật toán tìm kiếm heuristic được phát triển 
 
 ```mermaid
 graph TD
-    A[Bắt đầu: Thêm Start Node vào Open List] --> B{Open List trống?}
-    B -- Đúng --> C[Thất bại: Không có đường đi]
-    B -- Sai --> D[Chọn nút n có F nhỏ nhất từ Open List]
-    D --> E{n là Goal Node?}
-    E -- Đúng --> F[Thành công: Truy vết lại đường đi]
-    E -- Sai --> G[Chuyển n từ Open List sang Closed List]
-    G --> H[Duyệt qua tất cả các nút lân cận của n]
-    H --> I{Nút lân cận nằm trong Closed List hoặc là vật cản?}
-    I -- Đúng --> J[Bỏ qua]
-    I -- Sai --> K{Nút lân cận chưa có trong Open List?}
-    K -- Đúng --> L[Tính F = G + H. Thiết lập n làm cha. Thêm vào Open List]
-    K -- Sai --> M{Đường đi mới qua n có G tốt hơn?}
-    M -- Đúng --> N[Cập nhật G, F và đặt cha là n]
-    M -- Sai --> J
-    L --> B
-    N --> B
-    J --> B
+    StartA[Khởi tạo: Nhận Start_Node & Goal_Node] --> InitLists[Khởi tạo danh sách tập mở: Open_List <br> Danh sách tập đóng: Closed_List]
+    InitLists --> AddStart[Thêm Start_Node vào Open_List với F = 0]
+    
+    AddStart --> CheckOpen{Open_List rỗng?}
+    
+    CheckOpen -- Đúng --> PathFailed[Báo lỗi: Không tìm thấy đường thoát mê cung] --> EndA([Kết thúc])
+    
+    CheckOpen -- Sai --> PopLowest[Lấy ô Node_N có điểm F = G + H thấp nhất khỏi Open_List]
+    PopLowest --> AddClosed[Thêm Node_N vào Closed_List]
+    
+    AddClosed --> IsGoal{Node_N chính là Goal_Node?}
+    
+    IsGoal -- Đúng --> TracePath[Dò ngược các Node cha từ Goal về Start] --> ReturnPath[Xuất ra danh sách đường đi tối ưu /plan] --> EndA
+    
+    IsGoal -- Sai --> GetNeighbors[Duyệt qua 8 ô lân cận Node_M của Node_N]
+    
+    GetNeighbors --> LoopNeighbors{Đã duyệt hết 8 ô lân cận?}
+    
+    LoopNeighbors -- Chưa --> CheckValid{Ô Node_M có nằm trong Closed_List<br>hoặc là tường mê cung không?}
+    
+    CheckValid -- Có --> LoopNeighbors
+    
+    CheckValid -- Không --> CalcG[Tính toán: G_temp = G_N + chi phí di chuyển + chi phí phình costmap của ô M]
+    CalcG --> CheckOpenList{Ô M đã có sẵn trong Open_List chưa<br>hoặc G_temp < G_M cũ?}
+    
+    CheckOpenList -- Đúng --> UpdateNode[Cập nhật ô M:<br>G_M = G_temp<br>H_M = Khoảng cách Euclidean đến Goal<br>F_M = G_M + H_M<br>Gán Node cha của M là N<br>Thêm/Cập nhật M vào Open_List] --> LoopNeighbors
+    
+    CheckOpenList -- Sai --> LoopNeighbors
+    
+    LoopNeighbors -- Rồi --> CheckOpen
+
 ```
 
 ### 1.1. Công thức Toán học
@@ -147,6 +161,7 @@ planner_server:
 *   **`expected_planner_frequency: 5.0`**: Lập kế hoạch đường đi toàn cục sau mỗi `0.2` giây giúp cập nhật đường đi nhanh chóng khi có sự thay đổi.
 
 ---
+
 
 ## 4. Tóm tắt ưu thế của A* trong Đồ án
 *   **Đảm bảo an toàn:** Nhờ kết hợp bản đồ lưới `OccupancyGrid` và hàm chi phí $G(n)$ có tính toán đến kích thước robot (Inflation Layer với `inflation_radius: 0.55`), thuật toán A* luôn tìm ra đường đi có khoảng cách an toàn, tránh va chạm với tường mê cung.
